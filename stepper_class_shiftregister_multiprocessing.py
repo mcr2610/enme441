@@ -54,9 +54,9 @@ class Stepper:
         self.step_state += dir # increment/decrement the step
         self.step_state %= 8 # ensure result stays in [0,7]
         # Clear only this motor's 4 bits
-        Stepper.shifter_outputs |= 0b1111<<self.shifter_bit_start
+        Stepper.shifter_outputs  &= ~(0b1111 << self.shifter_bit_start)
         # Set this motor's bits using the current step in the sequence
-        Stepper.shifter_outputs &= Stepper.seq[self.step_state]<<self.shifter_bit_start
+        Stepper.shifter_outputs |= Stepper.seq[self.step_state] <<self.shifter_bit_start
         # Send updated bitmask to shift register
         self.s.shiftByte(Stepper.shifter_outputs)
         # Update angle
