@@ -90,7 +90,7 @@ class Stepper:
 
 # Example use:
 if __name__ == '__main__':
-    s = Shifter(data=2,latch=3,clock=4) # set up Shifter
+    s = Shifter(data=16,latch=20,clock=21) # set up Shifter
     # Use multiprocessing.Lock() to prevent motors from trying to
     # execute multiple operations at the same time:
     lock1 = multiprocessing.Lock()
