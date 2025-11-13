@@ -8,6 +8,7 @@
 import time
 import multiprocessing
 from shifter import Shifter # our custom Shifter class
+
 class Stepper:
     """
     Supports operation of an arbitrary number of stepper motors using
@@ -80,8 +81,21 @@ class Stepper:
         p.start()
      
     # Move to an absolute angle taking the shortest possible path:
-    def goAngle(self, angle):
-        pass
+    goAngle(self, angle):
+        # Normalize target angle to [0, 360)
+        angle %= 360
+
+        # Read current angle from shared memory
+        current_angle = self.angle.value
+
+        # Compute shortest rotation delta
+        delta = (angle - current_angle + 180) % 360 - 180
+
+        # Launch rotation in a separate process
+        time.sleep(0.1)
+        p = multiprocessing.Process(target=self.__rotate, args=(delta,))
+        p.start()
+
      
     # Set the motor zero point
     def zero(self):
