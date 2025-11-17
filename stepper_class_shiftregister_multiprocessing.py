@@ -54,9 +54,9 @@ class Stepper:
         self.step_state += dir # increment/decrement the step
         self.step_state %= 8 # ensure result stays in [0,7]
         # Clear only this motor's 4 bits
-        Stepper.shifter_outputs &= ~(0b1111 << self.shifter_bit_start)
+        Stepper.shifter_outputs &= ~(0b1111<<self.shifter_bit_start)
         # Set this motor's bits using the current step in the sequence
-        Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
+        Stepper.shifter_outputs |= Stepper.seq[self.step_state]<<self.shifter_bit_start
         # Send updated bitmask to shift register
         self.s.shiftByte(Stepper.shifter_outputs)
         # Update angle
@@ -82,16 +82,9 @@ class Stepper:
      
     # Move to an absolute angle taking the shortest possible path:
     def goAngle(self, angle):
-        # Normalize target angle to [0, 360)
         angle %= 360
-
-        # Read current angle from shared memory
         current_angle = self.angle.value
-
-        # Compute shortest rotation delta
         delta = (angle - current_angle + 180) % 360 - 180
-
-        # Launch rotation in a separate process
         time.sleep(0.1)
         p = multiprocessing.Process(target=self.__rotate, args=(delta,))
         p.start()
@@ -121,6 +114,7 @@ if __name__ == '__main__':
     m1.goAngle(-135)
     m1.goAngle(135)
     m1.goAngle(0)
+
     # While the motors are running in their separate processes, the main
     # code can continue doing its thing:
     try:
